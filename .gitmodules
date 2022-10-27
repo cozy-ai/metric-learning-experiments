@@ -1,0 +1,3 @@
+[submodule "cozyai"]
+	path = cozyai
+	url = https://github.com/gyeranchobab/cozyai
