@@ -1,0 +1,64 @@
+{
+    "model_name": "simclr",
+    "model": "base_encoder",
+    "embed_dim": 128,
+    "dataset": "cifar-10",
+    "device": "cuda",
+    "log_path": "/home/jh/research/cozyai/train_logs",
+    "criterion": "info_nce",
+    "dist_metric": "cosine-sim",
+    "eval_metrics": ["batch_ap"],
+    "criteria_score": "batch_ap",
+    "dataset_args": {
+        "root": "/home/jh/research/cozyai/datasets",
+        "download": true
+    },
+    "dataset_wrapper": "twin",
+    "dataset_wrapper_args":{
+        "x1_perturb": null,
+        "x2_perturb": null,
+        "init_shuffle": true
+    },
+    "backbone": "resnet18",
+    "backbone_args": {
+    },
+    "neck": "feedforward",
+    "neck_args": {
+        "n_layers": 2,
+        "in_dim": 512,
+        "h_dim": 512,
+        "activation": "relu"
+    },
+    "model_wrapper": "pair_contrastive",
+    "model_wrapper_args": {
+        "second_model": "same",
+        "complete_loss": "sample",
+        "dist_linear": false
+    },
+    "optimizer": "adam",
+    "optimizer_args": {
+        "params": [{
+                "params": "model"
+            }
+        ],
+        "lr": 0.0003,
+        "weight_decay": 1e-4
+    },
+    "batch_size": 256,
+    "num_workers": 8,
+    "epoch": 200,
+    "train_transforms": [
+        ["resize", [32], {}],
+        ["random_horizontal_flip", [], {}],
+        ["random_apply", [], {
+            "transforms" : ["color_jitter", [0.8, 0.8, 0.8, 0.2], {}],
+            "p": 0.8}
+        ],
+        ["random_grayscale", [], {"p": 0.2}],
+        ["to_tensor", [], {}]
+    ],
+    "eval_transforms": [
+        ["to_tensor", [], {}],
+        ["resize", [32], {}]
+    ]
+}
